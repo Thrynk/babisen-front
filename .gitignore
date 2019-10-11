@@ -26,3 +26,5 @@ yarn-error.log*
 public/
 .env
 .env.development
+.env.test
+.env.production

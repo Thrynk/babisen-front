@@ -28,7 +28,7 @@ class App extends Component {
             mode: 'cors',
             cache: 'default'
         };
-        fetch('http://localhost:8080/api/auth/facebook', options).then(r => {
+        fetch(process.env.REACT_APP_API_URL + '/api/auth/facebook', options).then(r => {
             console.log(r);
             const token = r.headers.get('x-auth-token');
             r.json().then(user => {
