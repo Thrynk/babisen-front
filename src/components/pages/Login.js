@@ -13,8 +13,8 @@ import './Login.css';
 const useStyles = makeStyles({
     avatar: {
         margin: 'auto',
-        width: '65%',
-        height: 'auto'
+        width: 160,
+        height: 160
     },
     facebookButton: {
         margin: 'auto',
@@ -51,7 +51,6 @@ function Login(props){
                             </Container>
                         </Grid>
                     </Grid>
-
                 )
             }
         </div>

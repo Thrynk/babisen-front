@@ -46,6 +46,7 @@ class App extends Component {
     }
 
     facebookResponse(response){
+        this.setState({isLoaded: false});
         console.log(response);
         const tokenBlob = new Blob([JSON.stringify({access_token: response.accessToken}, null, 2)], {type : 'application/json'});
         const options = {
@@ -57,7 +58,7 @@ class App extends Component {
             console.log(r.headers);
             r.json().then(user => {
                 console.log(user);
-                this.setState({isLoggedIn: true, user});
+                this.setState({isLoggedIn: true, user, isLoaded: true});
             });
         })
     }
