@@ -21,7 +21,7 @@ const actionNavStyles= makeStyles({
 
 const navStyles = makeStyles({
     root: {
-        position: 'absolute',
+        position: 'fixed',
         bottom: 0,
         width: '100%',
         backgroundColor: '#6200EE'
