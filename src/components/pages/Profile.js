@@ -39,7 +39,12 @@ export default class Profile extends Component{
                 return Promise.all([res1.json(), res2.json()]);
             })
             .then(([teams, matchesInfos]) => {
-                this.setState({teams, matchesInfos, loaded: true})
+                if(teams.length !== 0){
+                    this.setState({teams, matchesInfos, loaded: true})
+                }
+                else{
+                    this.setState({matchesInfos, loaded: true})
+                }
             })
     }
 
