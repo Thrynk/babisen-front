@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 
 import PrivateRoute from './components/helpers/PrivateRoute';
+import PrivateAdminRoute from './components/helpers/PrivateAdminRoute';
 
 import LoginPage from "./components/pages/Login";
 import ProfilePage from "./components/pages/Profile";
 import TeamsPage from "./components/pages/Teams";
 import TournamentsPage from "./components/pages/Tournaments";
+import AdminPage from "./components/pages/Admin";
 
 import BottomNav from "./components/partials/BottomNav";
 
@@ -64,6 +66,9 @@ class App extends Component {
     }
 
     render(){
+
+        const isUserAdmin = this.state.user ? this.state.user.role === "admin" : false;
+
         return (
             this.state.isLoaded ?
                 (<BrowserRouter>
@@ -83,6 +88,9 @@ class App extends Component {
                         <PrivateRoute path="/teams" isAuthenticated={this.state.isLoggedIn}>
                             <TeamsPage/>
                         </PrivateRoute>
+                        <PrivateAdminRoute path="/admin" isAuthenticated={this.state.isLoggedIn} isAdmin={isUserAdmin}>
+                            <AdminPage />
+                        </PrivateAdminRoute>
                     </Switch>
                 </BrowserRouter>) :
                 (
