@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
 import { makeStyles} from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
@@ -29,24 +29,35 @@ const navStyles = makeStyles({
 });
 
 
+/**
+ * @return {null}
+ */
 export default function BottomNav(){
 
     const classesNav = navStyles();
     const classesActionNav = actionNavStyles();
     const [value, setValue] = React.useState(0);
+    const location = useLocation();
+
+    const isAdminPage = location.pathname === "/admin";
 
     return(
-        <BottomNavigation
-            value={value}
-            onChange={(event, newValue) => {
-                setValue(newValue);
-            }}
-            showLabels
-            classes={{root: classesNav.root}}
-        >
-            <BottomNavigationAction label="Profil" icon={<AccountCircleOutlinedIcon />} component={Link} to="/profile" classes={{root: classesActionNav.root, selected: classesActionNav.selected}} />
-            <BottomNavigationAction label="Tournois" icon={<AccountTreeOutlinedIcon />} component={Link} to="/tournaments" classes={{root: classesActionNav.root, selected: classesActionNav.selected}} />
-            <BottomNavigationAction label="Equipes" icon={<PeopleOutlineOutlinedIcon />} component={Link} to="/teams" classes={{root: classesActionNav.root, selected: classesActionNav.selected}} />
-        </BottomNavigation>
+        !isAdminPage ? (
+            <BottomNavigation
+                value={value}
+                onChange={(event, newValue) => {
+                    setValue(newValue);
+                }}
+                showLabels
+                classes={{root: classesNav.root}}
+            >
+                <BottomNavigationAction label="Profil" icon={<AccountCircleOutlinedIcon/>} component={Link} to="/profile"
+                                        classes={{root: classesActionNav.root, selected: classesActionNav.selected}}/>
+                <BottomNavigationAction label="Tournois" icon={<AccountTreeOutlinedIcon/>} component={Link} to="/tournaments"
+                                        classes={{root: classesActionNav.root, selected: classesActionNav.selected}}/>
+                <BottomNavigationAction label="Equipes" icon={<PeopleOutlineOutlinedIcon/>} component={Link} to="/teams"
+                                        classes={{root: classesActionNav.root, selected: classesActionNav.selected}}/>
+            </BottomNavigation>
+        ) : null
     );
 }
