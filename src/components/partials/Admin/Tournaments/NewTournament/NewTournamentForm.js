@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {Fragment} from "react";
 
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
@@ -18,6 +18,11 @@ import TextField from '@material-ui/core/TextField';
 
 import Container from '@material-ui/core/Container';
 
+import Grid from '@material-ui/core/Grid';
+
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+
 const useStyles = makeStyles({
     root: {
         marginTop: 10,
@@ -27,7 +32,8 @@ const useStyles = makeStyles({
         "& form": {
             margin: "auto",
             maxWidth: "80%"
-        }
+        },
+        height: "82vh"
     },
     title: {
         fontSize: 25,
@@ -47,6 +53,12 @@ const useStyles = makeStyles({
     },
     buttonContainer: {
         textAlign: "center"
+    },
+    form : {
+        height: "100%"
+    },
+    loadingContainer: {
+        height: "90%"
     }
 });
 
@@ -54,134 +66,148 @@ export default function NewTournamentForm(props){
 
     const classes = useStyles();
 
-    const [selectedStartDate, handleStartDateChange] = useState(new Date());
-    const [selectedEndDate, handleEndDateChange] = useState(new Date());
-    const [selectedDoorTimeDate, handleDoorTimeDateChange] = useState(new Date());
-    const [isSolo, setIsSolo] = React.useState("Duo");
-    const [isAccessibleForFree, setIsAccessibleForFree] = React.useState("Gratuit");
-
-    const handleChange = event => {
-        setIsSolo(event.target.value);
-    };
-
-    const handleFreeChange = event => {
-        setIsAccessibleForFree(event.target.value);
-    };
-
-
     return (
         <Paper className={classes.root}>
-            <form onSubmit={props.handleSubmit}>
+            <form onSubmit={props.handleSubmit} className={classes.form}>
                 <Typography variant="h1" className={classes.title}>Création de tournoi</Typography>
-                <FormControl className={classes.formControl}>
-                    <InputLabel htmlFor="name">Nom</InputLabel>
-                    <Input
-                        id="name"
-                        value={props.name}
-                        onChange={props.handleChange}
-                        fullWidth
-                    />
-                </FormControl>
+                {
+                    !props.isLoading ? (
+                        <Fragment>
+                            <FormControl className={classes.formControl}>
+                                <InputLabel htmlFor="name">Nom</InputLabel>
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    value={props.name}
+                                    onChange={props.handleChange}
+                                    /*onBlur={() => console.log("exit field")}*/
+                                    fullWidth
+                                />
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <InputLabel htmlFor="description">Description</InputLabel>
-                    <Input
-                        id="description"
-                        value={props.description}
-                        onChange={props.handleChange}
-                        fullWidth
-                    />
-                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <InputLabel htmlFor="description">Description</InputLabel>
+                                <Input
+                                    id="description"
+                                    name="description"
+                                    value={props.description}
+                                    onChange={props.handleChange}
+                                    fullWidth
+                                />
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <DateTimePicker
-                        autoOk
-                        ampm={false}
-                        disablePast
-                        value={selectedStartDate}
-                        onChange={handleStartDateChange}
-                        label="Date de début"
-                    />
-                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <DateTimePicker
+                                    autoOk
+                                    ampm={false}
+                                    disablePast
+                                    value={props.startDate}
+                                    onChange={props.handleStartDateChange}
+                                    label="Date de début"
+                                    inputProps={{
+                                        name: "startDate"
+                                    }}
+                                />
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <DateTimePicker
-                        autoOk
-                        ampm={false}
-                        disablePast
-                        value={selectedEndDate}
-                        onChange={handleEndDateChange}
-                        label="Date de fin"
-                    />
-                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <DateTimePicker
+                                    autoOk
+                                    ampm={false}
+                                    disablePast
+                                    value={props.endDate}
+                                    onChange={props.handleEndDateChange}
+                                    label="Date de fin"
+                                />
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <DateTimePicker
-                        autoOk
-                        ampm={false}
-                        disablePast
-                        value={selectedDoorTimeDate}
-                        onChange={handleDoorTimeDateChange}
-                        label="Date de fin d'inscription"
-                    />
-                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <DateTimePicker
+                                    autoOk
+                                    ampm={false}
+                                    disablePast
+                                    value={props.doorTime}
+                                    onChange={props.handleDoorTimeDateChange}
+                                    label="Date de fin d'inscription"
+                                />
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                    <Select
-                        id="demo-simple-select"
-                        value={isSolo}
-                        onChange={handleChange}
-                    >
-                        <MenuItem value={"Duo"}>Duo</MenuItem>
-                        <MenuItem value={"Solo"}>Solo</MenuItem>
-                    </Select>
-                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                                <Select
+                                    id="demo-simple-select"
+                                    value={props.isSolo ? "Solo" : "Duo"}
+                                    inputProps={{
+                                        name: "isSolo"
+                                    }}
+                                    onChange={props.handleChange}
+                                >
+                                    <MenuItem value={"Duo"}>Duo</MenuItem>
+                                    <MenuItem value={"Solo"}>Solo</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                    <Select
-                        id="demo-simple-select"
-                        value={isAccessibleForFree}
-                        onChange={handleFreeChange}
-                    >
-                        <MenuItem value={"Gratuit"}>Gratuit</MenuItem>
-                        <MenuItem value={"Payant"}>Payant</MenuItem>
-                    </Select>
-                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                                <Select
+                                    id="demo-simple-select"
+                                    value={props.isAccessibleForFree ? "Gratuit" : "Payant"}
+                                    inputProps={{
+                                        name: "isAccessibleForFree"
+                                    }}
+                                    onChange={props.handleChange}
+                                >
+                                    <MenuItem value={"Gratuit"}>Gratuit</MenuItem>
+                                    <MenuItem value={"Payant"}>Payant</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <TextField
-                        id="outlined-helperText"
-                        label="Capacité maximale"
-                        type="number"
-                        defaultValue="20"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        inputProps={{
-                            min: 0
-                        }}
-                        variant="outlined"
-                        min="0"
-                    />
-                </FormControl>
+                            <FormControl className={classes.formControl}>
+                                <TextField
+                                    id="outlined-helperText"
+                                    name="maximumAttendeeCapacity"
+                                    onChange={props.handleChange}
+                                    label="Capacité maximale"
+                                    type="number"
+                                    defaultValue="20"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    inputProps={{
+                                        min: 0
+                                    }}
+                                    variant="outlined"
+                                />
+                            </FormControl>
 
-                <FormControl className={classes.formControl}>
-                    <InputLabel htmlFor="image">Lien de l'image</InputLabel>
-                    <Input
-                        id="image"
-                        value={props.imgUrl}
-                        onChange={props.handleChange}
-                        fullWidth
-                    />
-                </FormControl>
-                <Container className={classes.buttonContainer}>
-                    <Button className={classes.button} variant="outlined" color="primary" type="submit" onSubmit={props.handleSubmit}>
-                        Créer
-                    </Button>
-                </Container>
-
+                            <FormControl className={classes.formControl}>
+                                <InputLabel htmlFor="image">Lien de l'image</InputLabel>
+                                <Input
+                                    id="image"
+                                    name="imgUrl"
+                                    value={props.imgUrl}
+                                    onChange={props.handleChange}
+                                    fullWidth
+                                />
+                            </FormControl>
+                            <Container className={classes.buttonContainer}>
+                                <Button className={classes.button} variant="outlined" color="primary" type="submit" onSubmit={props.handleSubmit}>
+                                    Créer
+                                </Button>
+                            </Container>
+                        </Fragment>
+                    ) :
+                    (
+                        <Grid
+                            container
+                            justify="center"
+                            alignItems="center"
+                            className={classes.loadingContainer}
+                        >
+                                <CircularProgress />
+                        </Grid>
+                    )
+                }
             </form>
         </Paper>
     );
