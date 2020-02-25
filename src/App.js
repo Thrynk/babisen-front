@@ -2,15 +2,20 @@ import React, { Component } from 'react';
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 
 import PrivateRoute from './components/helpers/PrivateRoute';
+import PrivateAdminRoute from './components/helpers/PrivateAdminRoute';
 
 import LoginPage from "./components/pages/Login";
 import ProfilePage from "./components/pages/Profile";
 import TeamsPage from "./components/pages/Teams";
 import TournamentsPage from "./components/pages/Tournaments";
+import AdminPage from "./components/pages/Admin";
 
 import BottomNav from "./components/partials/BottomNav";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 import './App.css';
 
@@ -64,27 +69,35 @@ class App extends Component {
     }
 
     render(){
+
+        const isUserAdmin = this.state.user ? this.state.user.role === "admin" : false;
+
         return (
             this.state.isLoaded ?
-                (<BrowserRouter>
-                    {this.state.isLoggedIn &&
-                        <BottomNav/>
-                    }
-                    <Switch>
-                        <Route exact path="/">
-                            <LoginPage isLoggedIn={this.state.isLoggedIn} facebookResponse={this.facebookResponse}/>
-                        </Route>
-                        <PrivateRoute path="/profile" isAuthenticated={this.state.isLoggedIn}>
-                            <ProfilePage user={this.state.user}/>
-                        </PrivateRoute>
-                        <PrivateRoute path="/tournaments" isAuthenticated={this.state.isLoggedIn}>
-                            <TournamentsPage/>
-                        </PrivateRoute>
-                        <PrivateRoute path="/teams" isAuthenticated={this.state.isLoggedIn}>
-                            <TeamsPage/>
-                        </PrivateRoute>
-                    </Switch>
-                </BrowserRouter>) :
+                (<MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <BrowserRouter>
+                        {this.state.isLoggedIn &&
+                            <BottomNav/>
+                        }
+                        <Switch>
+                            <Route exact path="/">
+                                <LoginPage isLoggedIn={this.state.isLoggedIn} facebookResponse={this.facebookResponse}/>
+                            </Route>
+                            <PrivateRoute path="/profile" isAuthenticated={this.state.isLoggedIn}>
+                                <ProfilePage user={this.state.user}/>
+                            </PrivateRoute>
+                            <PrivateRoute path="/tournaments" isAuthenticated={this.state.isLoggedIn}>
+                                <TournamentsPage/>
+                            </PrivateRoute>
+                            <PrivateRoute path="/teams" isAuthenticated={this.state.isLoggedIn}>
+                                <TeamsPage/>
+                            </PrivateRoute>
+                            <PrivateAdminRoute path="/admin" isAuthenticated={this.state.isLoggedIn} isAdmin={isUserAdmin}>
+                                <AdminPage />
+                            </PrivateAdminRoute>
+                        </Switch>
+                    </BrowserRouter>
+                </MuiPickersUtilsProvider>) :
                 (
                     <div className="container">
                         <CircularProgress />
