@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
 import FacebookLogin from 'react-facebook-login';
 import { makeStyles} from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -12,8 +13,8 @@ import './Login.css';
 const useStyles = makeStyles({
     avatar: {
         margin: 'auto',
-        width: '65%',
-        height: 'auto'
+        width: 160,
+        height: 160
     },
     facebookButton: {
         margin: 'auto',
@@ -32,7 +33,7 @@ function Login(props){
     return (
         <div className="mainContainer">
             {props.isLoggedIn ? (
-                    <div> Connecté </div>
+                    <Redirect to="/profile"/>
                 ) :
                 (
                     <Grid container justify="center" alignItems="center" className={classes.contentContainer}>
@@ -50,7 +51,6 @@ function Login(props){
                             </Container>
                         </Grid>
                     </Grid>
-
                 )
             }
         </div>
