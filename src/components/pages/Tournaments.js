@@ -6,6 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
 import TournamentCard from "../partials/Tournaments/TournamentCard";
 
@@ -28,6 +29,12 @@ const actionTabsStyles = makeStyles({
 const TabsStyles = makeStyles({
    root : {
        backgroundColor: '#fff'
+   }
+});
+
+const TabPanelStyles = makeStyles({
+   root: {
+       marginBottom: 56
    }
 });
 
@@ -58,6 +65,7 @@ function Tournaments(props){
     const classes = useStyles();
     const classesActionTabs = actionTabsStyles();
     const classesTabs = TabsStyles();
+    const classesTabsPanel = TabPanelStyles();
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -79,26 +87,77 @@ function Tournaments(props){
                 </Tabs>
             </Paper>
 
-            <TabPanel value={value} index={0}>
+            <TabPanel value={value} index={0} className={classesTabsPanel.root}>
                 {
-                    props.tournaments.map(function(tournament){
+                    props.nextTournaments.length === 0 &&
+                        <Grid container justify="center">
+                            <Typography component="div">
+                                Pas de tournoi.
+                            </Typography>
+                        </Grid>
+                }
+                {
+                    props.nextTournaments.map(function(tournament, index){
                         return (
                             <TournamentCard
+                                key={index}
                                 name={tournament.name}
-                                date={tournament.date}
+                                date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
-                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity}
+                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
                                 imgUrl={tournament.imgUrl}
                             />
                         );
                     })
                 }
             </TabPanel>
-            <TabPanel value={value} index={1}>
-                Item Two
+            <TabPanel value={value} index={1} className={classesTabsPanel.root}>
+                {
+                    props.currentTournaments.length === 0 &&
+                        <Grid container justify="center">
+                            <Typography component="div">
+                                Pas de tournoi.
+                            </Typography>
+                        </Grid>
+                }
+                {
+                    props.currentTournaments.map(function(tournament, index){
+                        return (
+                            <TournamentCard
+                                key={index}
+                                name={tournament.name}
+                                date={tournament.startDate}
+                                maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
+                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
+                                imgUrl={tournament.imgUrl}
+                            />
+                        );
+                    })
+                }
             </TabPanel>
-            <TabPanel value={value} index={2}>
-                Item Three
+            <TabPanel value={value} index={2} className={classesTabsPanel.root}>
+                {
+                    props.finishedTournaments.length === 0 &&
+                        <Grid container justify="center">
+                            <Typography component="div">
+                                Pas de tournoi.
+                            </Typography>
+                        </Grid>
+                }
+                {
+                    props.finishedTournaments.map(function(tournament, index){
+                        return (
+                            <TournamentCard
+                                key={index}
+                                name={tournament.name}
+                                date={tournament.startDate}
+                                maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
+                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
+                                imgUrl={tournament.imgUrl}
+                            />
+                        );
+                    })
+                }
             </TabPanel>
         </div>
     );
@@ -109,22 +168,74 @@ export default class TournamentsPage extends Component {
     constructor(props){
         super(props);
         this.state = {
-          tournaments: [
-              {
-                  name: "Afterwork PDD",
-                  date: "26/10/2020 - 18h",
-                  maximumAttendeeCapacity: 40,
-                  remainingAttendeeCapacity: 29,
-                  imgUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQloN9rm3GTpWAW6AodU_ofeADoU7RDR0heHbXaapD6FwZ1mA8VzQ&s"
-              }
-          ]
+            nextTournaments: [],
+            currentTournaments: [],
+            finishedTournaments: []
         };
+    }
+
+    componentDidMount() {
+        Promise.all([
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/next', {method: 'GET', credentials: "include"}), // next tournaments
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/current', {method: 'GET', credentials: "include"}), // current tournaments
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/finished', {method:'GET', credentials: "include"})
+        ])
+            .then(([next, current, finished]) => {
+                let responses = [];
+
+                switch(next.status){
+                    case 200:
+                        responses.push(next.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                switch(current.status){
+                    case 200:
+                        responses.push(current.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                switch(finished.status){
+                    case 200:
+                        responses.push(finished.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                return Promise.all(responses);
+
+            })
+            .then(([next, current, finished]) => {
+                console.log(next);
+                console.log(current);
+                console.log(finished);
+                this.setState({nextTournaments: next, currentTournaments: current, finishedTournaments: finished});
+            })
+            .catch(error => console.log(error));
     }
 
     render(){
         return(
           <Fragment>
-            <Tournaments tournaments={this.state.tournaments} />
+            <Tournaments
+                nextTournaments={this.state.nextTournaments}
+                currentTournaments={this.state.currentTournaments}
+                finishedTournaments={this.state.finishedTournaments}
+            />
           </Fragment>
         );
     }
