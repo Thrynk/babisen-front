@@ -6,6 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
 import TournamentCard from "../partials/Tournaments/TournamentCard";
 
@@ -81,13 +82,21 @@ function Tournaments(props){
 
             <TabPanel value={value} index={0}>
                 {
-                    props.tournaments.map(function(tournament){
+                    props.nextTournaments.length === 0 &&
+                        <Grid container justify="center">
+                            <Typography component="body1">
+                                Pas de tournoi.
+                            </Typography>
+                        </Grid>
+                }
+                {
+                    props.nextTournaments.map(function(tournament){
                         return (
                             <TournamentCard
                                 name={tournament.name}
-                                date={tournament.date}
+                                date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
-                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity}
+                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
                                 imgUrl={tournament.imgUrl}
                             />
                         );
@@ -95,10 +104,50 @@ function Tournaments(props){
                 }
             </TabPanel>
             <TabPanel value={value} index={1}>
-                Item Two
+                {
+                    props.currentTournaments.length === 0 &&
+                        <Grid container justify="center">
+                            <Typography component="body1">
+                                Pas de tournoi.
+                            </Typography>
+                        </Grid>
+                }
+                {
+                    props.currentTournaments.map(function(tournament){
+                        return (
+                            <TournamentCard
+                                name={tournament.name}
+                                date={tournament.startDate}
+                                maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
+                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
+                                imgUrl={tournament.imgUrl}
+                            />
+                        );
+                    })
+                }
             </TabPanel>
             <TabPanel value={value} index={2}>
-                Item Three
+                {
+                    props.finishedTournaments.length === 0 &&
+                        <Grid container justify="center">
+                            <Typography component="body1">
+                                Pas de tournoi.
+                            </Typography>
+                        </Grid>
+                }
+                {
+                    props.finishedTournaments.map(function(tournament){
+                        return (
+                            <TournamentCard
+                                name={tournament.name}
+                                date={tournament.startDate}
+                                maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
+                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
+                                imgUrl={tournament.imgUrl}
+                            />
+                        );
+                    })
+                }
             </TabPanel>
         </div>
     );
@@ -109,22 +158,61 @@ export default class TournamentsPage extends Component {
     constructor(props){
         super(props);
         this.state = {
-          tournaments: [
-              {
-                  name: "Afterwork PDD",
-                  date: "26/10/2020 - 18h",
-                  maximumAttendeeCapacity: 40,
-                  remainingAttendeeCapacity: 29,
-                  imgUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQloN9rm3GTpWAW6AodU_ofeADoU7RDR0heHbXaapD6FwZ1mA8VzQ&s"
-              }
-          ]
+            nextTournaments: [],
+            currentTournaments: [],
+            finishedTournaments: []
         };
+    }
+
+    componentDidMount() {
+        Promise.all([
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/next', {method: 'GET', credentials: "include"}), // next tournaments
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/current', {method: 'GET', credentials: "include"})
+        ])
+            .then(([next, current]) => {
+                let responses = [];
+
+                switch(next.status){
+                    case 200:
+                        responses.push(next.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                switch(current.status){
+                    case 200:
+                        responses.push(current.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                return Promise.all(responses);
+
+            })
+            .then(([next, current]) => {
+                console.log(next);
+                console.log(current);
+                this.setState({nextTournaments: next, currentTournaments: current});
+            })
+            .catch(error => console.log(error));
     }
 
     render(){
         return(
           <Fragment>
-            <Tournaments tournaments={this.state.tournaments} />
+            <Tournaments
+                nextTournaments={this.state.nextTournaments}
+                currentTournaments={this.state.currentTournaments}
+                finishedTournaments={this.state.finishedTournaments}
+            />
           </Fragment>
         );
     }
