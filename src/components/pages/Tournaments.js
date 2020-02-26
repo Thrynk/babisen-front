@@ -32,6 +32,12 @@ const TabsStyles = makeStyles({
    }
 });
 
+const TabPanelStyles = makeStyles({
+   root: {
+       marginBottom: 56
+   }
+});
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -59,6 +65,7 @@ function Tournaments(props){
     const classes = useStyles();
     const classesActionTabs = actionTabsStyles();
     const classesTabs = TabsStyles();
+    const classesTabsPanel = TabPanelStyles();
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -80,19 +87,20 @@ function Tournaments(props){
                 </Tabs>
             </Paper>
 
-            <TabPanel value={value} index={0}>
+            <TabPanel value={value} index={0} className={classesTabsPanel.root}>
                 {
                     props.nextTournaments.length === 0 &&
                         <Grid container justify="center">
-                            <Typography component="body1">
+                            <Typography component="div">
                                 Pas de tournoi.
                             </Typography>
                         </Grid>
                 }
                 {
-                    props.nextTournaments.map(function(tournament){
+                    props.nextTournaments.map(function(tournament, index){
                         return (
                             <TournamentCard
+                                key={index}
                                 name={tournament.name}
                                 date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
@@ -103,19 +111,20 @@ function Tournaments(props){
                     })
                 }
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={value} index={1} className={classesTabsPanel.root}>
                 {
                     props.currentTournaments.length === 0 &&
                         <Grid container justify="center">
-                            <Typography component="body1">
+                            <Typography component="div">
                                 Pas de tournoi.
                             </Typography>
                         </Grid>
                 }
                 {
-                    props.currentTournaments.map(function(tournament){
+                    props.currentTournaments.map(function(tournament, index){
                         return (
                             <TournamentCard
+                                key={index}
                                 name={tournament.name}
                                 date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
@@ -126,19 +135,20 @@ function Tournaments(props){
                     })
                 }
             </TabPanel>
-            <TabPanel value={value} index={2}>
+            <TabPanel value={value} index={2} className={classesTabsPanel.root}>
                 {
                     props.finishedTournaments.length === 0 &&
                         <Grid container justify="center">
-                            <Typography component="body1">
+                            <Typography component="div">
                                 Pas de tournoi.
                             </Typography>
                         </Grid>
                 }
                 {
-                    props.finishedTournaments.map(function(tournament){
+                    props.finishedTournaments.map(function(tournament, index){
                         return (
                             <TournamentCard
+                                key={index}
                                 name={tournament.name}
                                 date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
@@ -167,9 +177,10 @@ export default class TournamentsPage extends Component {
     componentDidMount() {
         Promise.all([
             fetch(process.env.REACT_APP_API_URL + '/api/tournaments/next', {method: 'GET', credentials: "include"}), // next tournaments
-            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/current', {method: 'GET', credentials: "include"})
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/current', {method: 'GET', credentials: "include"}), // current tournaments
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/finished', {method:'GET', credentials: "include"})
         ])
-            .then(([next, current]) => {
+            .then(([next, current, finished]) => {
                 let responses = [];
 
                 switch(next.status){
@@ -194,13 +205,25 @@ export default class TournamentsPage extends Component {
                         responses.push(Promise.reject());
                 }
 
+                switch(finished.status){
+                    case 200:
+                        responses.push(finished.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
                 return Promise.all(responses);
 
             })
-            .then(([next, current]) => {
+            .then(([next, current, finished]) => {
                 console.log(next);
                 console.log(current);
-                this.setState({nextTournaments: next, currentTournaments: current});
+                console.log(finished);
+                this.setState({nextTournaments: next, currentTournaments: current, finishedTournaments: finished});
             })
             .catch(error => console.log(error));
     }

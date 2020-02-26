@@ -17,7 +17,8 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 const useStyles = makeStyles(() => ({
     card: {
         maxWidth: 345,
-        margin: 'auto'
+        margin: 'auto',
+        marginBottom: 20
     },
     media: {
         height: 0,

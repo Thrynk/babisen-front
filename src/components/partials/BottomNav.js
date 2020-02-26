@@ -24,7 +24,8 @@ const navStyles = makeStyles({
         position: 'fixed',
         bottom: 0,
         width: '100%',
-        backgroundColor: '#6200EE'
+        backgroundColor: '#6200EE',
+        zIndex: 2
     }
 });
 
