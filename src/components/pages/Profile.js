@@ -21,15 +21,6 @@ export default class Profile extends Component{
     }
 
     componentDidMount() {
-        /*fetch(process.env.REACT_APP_API_URL + '/api/teams/user', {method: 'GET', credentials: "include"}).then(r => {
-            if(r.status === 200){
-                r.json().then(teams => {
-                    this.setState({teams, teamsLoaded: true});
-                }).catch(e => {
-                    console.log(e);
-                })
-            }
-        });*/
 
         Promise.all([
             fetch(process.env.REACT_APP_API_URL + '/api/teams/user', {method: 'GET', credentials: "include"}), //user's teams
@@ -57,7 +48,7 @@ export default class Profile extends Component{
         const teamsLoaded = this.state.loaded ?
             (
                 <div style={{color: "white"}}>
-                    <Typography component="body1" gutterBottom>{firstTeamName}</Typography>
+                    <Typography component="div" gutterBottom>{firstTeamName}</Typography>
                 </div>
             )
             : (<CircularProgress style={{color: 'white'}}/>);
@@ -76,7 +67,7 @@ export default class Profile extends Component{
                     <Grid item style={{color: "white", textAlign: "center"}}>
                         <div style={{paddingTop: "10px"}}>
                             <PersonPin style={{transform: "translate(0, 30%)"}}/>
-                            <Typography component="body1"> Profil</Typography>
+                            <Typography component="div"> Profil</Typography>
                         </div>
                     </Grid>
 
@@ -95,7 +86,7 @@ export default class Profile extends Component{
                     <Grid item>
                         <Grid container justify="center" style={{padding: 0}}>
                             <div style={{color: "white"}}>
-                                <Typography component="body1" gutterBottom>
+                                <Typography component="div" gutterBottom>
                                     {user.first_name && user.last_name ? this.props.user.first_name + " " + user.last_name : "Erreur"}
                                 </Typography>
                             </div>
@@ -118,19 +109,19 @@ export default class Profile extends Component{
                             {this.state.loaded ? (
                                 <Grid container justify="center" direction="column">
                                     <Grid item>
-                                        <Typography component="body1" gutterBottom>
+                                        <Typography component="div" gutterBottom>
                                             Joués : {MatchesPlayed}
                                         </Typography>
                                         <Divider component="hr" />
                                     </Grid>
                                     <Grid item>
-                                        <Typography component="body1" gutterBottom>
+                                        <Typography component="div" gutterBottom>
                                             Gagnés : {MatchesWon}
                                         </Typography>
                                         <Divider component="hr" />
                                     </Grid>
                                     <Grid item>
-                                        <Typography component="body1" gutterBottom>
+                                        <Typography component="div" gutterBottom>
                                             Perdus : {MatchesLost}
                                         </Typography>
                                     </Grid>

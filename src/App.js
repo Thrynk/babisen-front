@@ -34,7 +34,7 @@ class App extends Component {
         fetch(process.env.REACT_APP_API_URL + '/api/users/me', {method: 'GET', credentials: "include"}).then(r => {
             if(r.status === 200){
                 r.json().then((function(user){
-                   console.log(user);
+                    //console.log(user);
                     this.setState({isLoggedIn: true, isLoaded: true, user});
                 }).bind(this)).catch(function(e){
                     console.log(e);
@@ -52,7 +52,7 @@ class App extends Component {
 
     facebookResponse(response){
         this.setState({isLoaded: false});
-        console.log(response);
+        //console.log(response);
         const tokenBlob = new Blob([JSON.stringify({access_token: response.accessToken}, null, 2)], {type : 'application/json'});
         const options = {
             method: 'POST',
@@ -62,7 +62,7 @@ class App extends Component {
         fetch(process.env.REACT_APP_API_URL + '/api/auth/facebook', options).then(r => {
             console.log(r.headers);
             r.json().then(user => {
-                console.log(user);
+                //console.log(user);
                 this.setState({isLoggedIn: true, user, isLoaded: true});
             });
         })

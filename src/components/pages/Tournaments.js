@@ -220,9 +220,9 @@ export default class TournamentsPage extends Component {
 
             })
             .then(([next, current, finished]) => {
-                console.log(next);
+                /*console.log(next);
                 console.log(current);
-                console.log(finished);
+                console.log(finished);*/
                 this.setState({nextTournaments: next, currentTournaments: current, finishedTournaments: finished});
             })
             .catch(error => console.log(error));
