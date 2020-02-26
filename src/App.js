@@ -60,7 +60,6 @@ class App extends Component {
             credentials: "include"
         };
         fetch(process.env.REACT_APP_API_URL + '/api/auth/facebook', options).then(r => {
-            console.log(r.headers);
             r.json().then(user => {
                 //console.log(user);
                 this.setState({isLoggedIn: true, user, isLoaded: true});
@@ -71,6 +70,8 @@ class App extends Component {
     render(){
 
         const isUserAdmin = this.state.user ? this.state.user.role === "admin" : false;
+
+        const userId = this.state.user ? this.state.user._id : null;
 
         return (
             this.state.isLoaded ?
@@ -87,7 +88,7 @@ class App extends Component {
                                 <ProfilePage user={this.state.user}/>
                             </PrivateRoute>
                             <PrivateRoute path="/tournaments" isAuthenticated={this.state.isLoggedIn}>
-                                <TournamentsPage/>
+                                <TournamentsPage userId={userId} />
                             </PrivateRoute>
                             <PrivateRoute path="/teams" isAuthenticated={this.state.isLoggedIn}>
                                 <TeamsPage/>
