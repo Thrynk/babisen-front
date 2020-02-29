@@ -98,6 +98,14 @@ function Tournaments(props){
                 }
                 {
                     props.nextTournaments.map(function(tournament, index){
+
+                        let isSubscribedToTournament = tournament.attendees.find(attendee => {
+                            return attendee === props.userId;
+                        });
+
+                        /*console.log(isSubscribedToTournament);
+                        console.log(isSubscribedToTournament !== undefined);*/
+
                         return (
                             <TournamentCard
                                 key={index}
@@ -106,6 +114,13 @@ function Tournaments(props){
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
                                 remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
                                 imgUrl={tournament.imgUrl}
+                                id={tournament._id}
+                                attendees={tournament.attendees}
+
+                                isSubscribedToTournament={isSubscribedToTournament !== undefined}
+
+                                subscribeUserToTournament={props.subscribeUserToTournament}
+                                unsubscribeUserToTournament={props.unsubscribeUserToTournament}
                             />
                         );
                     })
@@ -172,6 +187,8 @@ export default class TournamentsPage extends Component {
             currentTournaments: [],
             finishedTournaments: []
         };
+        this.subscribeUserToTournament = this.subscribeUserToTournament.bind(this);
+        this.unsubscribeUserToTournament = this.unsubscribeUserToTournament.bind(this);
     }
 
     componentDidMount() {
@@ -228,6 +245,100 @@ export default class TournamentsPage extends Component {
             .catch(error => console.log(error));
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        Promise.all([
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/next', {method: 'GET', credentials: "include"}), // next tournaments
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/current', {method: 'GET', credentials: "include"}), // current tournaments
+            fetch(process.env.REACT_APP_API_URL + '/api/tournaments/finished', {method:'GET', credentials: "include"})
+        ])
+            .then(([next, current, finished]) => {
+                let responses = [];
+
+                switch(next.status){
+                    case 200:
+                        responses.push(next.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                switch(current.status){
+                    case 200:
+                        responses.push(current.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                switch(finished.status){
+                    case 200:
+                        responses.push(finished.json());
+                        break;
+                    case 204:
+                        responses.push(Promise.resolve([]));
+                        break;
+                    default:
+                        responses.push(Promise.reject());
+                }
+
+                return Promise.all(responses);
+
+            })
+            .then(([next, current, finished]) => {
+                /*console.log(next);
+                console.log(current);
+                console.log(finished);*/
+                this.setState({nextTournaments: next, currentTournaments: current, finishedTournaments: finished});
+            })
+            .catch(error => console.log(error));
+    }
+
+    subscribeUserToTournament(tournamentId){
+        console.log("suscribe : ", this.props.userId, " to ", tournamentId);
+        fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendee/add/' + tournamentId,
+            {
+                    method:'PUT',
+                    credentials: "include",
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({ attendee: this.props.userId })
+                }
+            )
+            .then(response => {
+                if(response.status === 200){
+                    this.forceUpdate();
+                }
+            })
+            .catch(error => console.log(error));
+    }
+
+    unsubscribeUserToTournament(tournamentId){
+        console.log("unsuscribe : ", this.props.userId, " to ", tournamentId);
+        fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendee/remove/' + tournamentId,
+            {
+                method:'PUT',
+                credentials: "include",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({ attendee: this.props.userId })
+            }
+        )
+            .then(response => {
+                if(response.status === 200){
+                    this.forceUpdate();
+                }
+            })
+            .catch(error => console.log(error));
+    }
+
     render(){
         return(
           <Fragment>
@@ -235,6 +346,10 @@ export default class TournamentsPage extends Component {
                 nextTournaments={this.state.nextTournaments}
                 currentTournaments={this.state.currentTournaments}
                 finishedTournaments={this.state.finishedTournaments}
+                userId={this.props.userId}
+
+                subscribeUserToTournament={this.subscribeUserToTournament}
+                unsubscribeUserToTournament={this.unsubscribeUserToTournament}
             />
           </Fragment>
         );

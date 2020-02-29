@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
 import ShareIcon from '@material-ui/icons/Share';
 import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 const useStyles = makeStyles(() => ({
@@ -66,11 +67,16 @@ export default function TournamentCard(props) {
             </CardContent>
             <CardActions disableSpacing>
                 <Button
-                    aria-label="subscribe"
+                    aria-label={"subscribe"}
                     className={classes.buttons}
-                    startIcon={<AddIcon />}
+                    startIcon={props.isSubscribedToTournament ? <DeleteIcon /> : <AddIcon />}
+                    onClick={
+                        props.isSubscribedToTournament ?
+                            () => props.unsubscribeUserToTournament(props.id)
+                            : () => props.subscribeUserToTournament(props.id)
+                        }
                 >
-                    S'inscrire
+                    { props.isSubscribedToTournament ? "Se désinscrire" : "S'inscrire" }
                 </Button>
                 <Button
                     aria-label="See more"
