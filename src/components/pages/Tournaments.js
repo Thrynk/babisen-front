@@ -8,7 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 
-import TournamentCard from "../partials/Tournaments/TournamentCard";
+import NextTournamentCard from "../partials/Tournaments/NextTournamentCard";
+import CurrentTournamentCard from "../partials/Tournaments/CurrentTournamentCard";
+import FinishedTournamentCard from "../partials/Tournaments/FinishedTournamentCard";
+
 
 const useStyles = makeStyles({
     root: {
@@ -107,20 +110,21 @@ function Tournaments(props){
                         console.log(isSubscribedToTournament !== undefined);*/
 
                         return (
-                            <TournamentCard
+                            <NextTournamentCard
                                 key={index}
                                 name={tournament.name}
                                 date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
-                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
                                 imgUrl={tournament.imgUrl}
                                 id={tournament._id}
                                 attendees={tournament.attendees}
+                                attendeesNames={props.nextTournamentAttendees[tournament._id]}
 
                                 isSubscribedToTournament={isSubscribedToTournament !== undefined}
 
                                 subscribeUserToTournament={props.subscribeUserToTournament}
                                 unsubscribeUserToTournament={props.unsubscribeUserToTournament}
+                                fetchAttendees={props.fetchAttendees}
                             />
                         );
                     })
@@ -138,12 +142,12 @@ function Tournaments(props){
                 {
                     props.currentTournaments.map(function(tournament, index){
                         return (
-                            <TournamentCard
+                            <CurrentTournamentCard
                                 key={index}
                                 name={tournament.name}
                                 date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
-                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
+                                attendees={tournament.attendees}
                                 imgUrl={tournament.imgUrl}
                             />
                         );
@@ -162,12 +166,12 @@ function Tournaments(props){
                 {
                     props.finishedTournaments.map(function(tournament, index){
                         return (
-                            <TournamentCard
+                            <FinishedTournamentCard
                                 key={index}
                                 name={tournament.name}
                                 date={tournament.startDate}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
-                                remainingAttendeeCapacity={tournament.remainingAttendeeCapacity ? tournament.remainingAttendeeCapacity : tournament.maximumAttendeeCapacity}
+                                attendees={tournament.attendees}
                                 imgUrl={tournament.imgUrl}
                             />
                         );
@@ -185,10 +189,12 @@ export default class TournamentsPage extends Component {
         this.state = {
             nextTournaments: [],
             currentTournaments: [],
-            finishedTournaments: []
+            finishedTournaments: [],
+            nextTournamentAttendees: []
         };
         this.subscribeUserToTournament = this.subscribeUserToTournament.bind(this);
         this.unsubscribeUserToTournament = this.unsubscribeUserToTournament.bind(this);
+        this.fetchAttendeesOfTournament = this.fetchAttendeesOfTournament.bind(this);
     }
 
     componentDidMount() {
@@ -322,7 +328,7 @@ export default class TournamentsPage extends Component {
     unsubscribeUserToTournament(tournamentId){
         console.log("unsuscribe : ", this.props.userId, " to ", tournamentId);
         fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendee/remove/' + tournamentId,
-            {
+        {
                 method:'PUT',
                 credentials: "include",
                 headers: {
@@ -339,6 +345,23 @@ export default class TournamentsPage extends Component {
             .catch(error => console.log(error));
     }
 
+    fetchAttendeesOfTournament(tournamentId){
+        fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendees/' + tournamentId,
+        {
+                method: 'GET',
+                credentials: "include"
+            }
+        )
+            .then(response => response.json())
+            .then(attendees => {
+                let nextTournamentAttendees = this.state.nextTournamentAttendees;
+                nextTournamentAttendees[tournamentId] = attendees;
+                console.log(nextTournamentAttendees);
+                this.setState({nextTournamentAttendees: nextTournamentAttendees});
+            })
+            .catch(e => console.log(e));
+    }
+
     render(){
         return(
           <Fragment>
@@ -347,9 +370,11 @@ export default class TournamentsPage extends Component {
                 currentTournaments={this.state.currentTournaments}
                 finishedTournaments={this.state.finishedTournaments}
                 userId={this.props.userId}
+                nextTournamentAttendees={this.state.nextTournamentAttendees}
 
                 subscribeUserToTournament={this.subscribeUserToTournament}
                 unsubscribeUserToTournament={this.unsubscribeUserToTournament}
+                fetchAttendees={this.fetchAttendeesOfTournament}
             />
           </Fragment>
         );

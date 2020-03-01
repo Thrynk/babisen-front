@@ -11,13 +11,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
 import ShareIcon from '@material-ui/icons/Share';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-
-import Collapse from '@material-ui/core/Collapse';
-
-import ListOfAttendees from "./ListOfAttendees";
+import PlayIcon from '@material-ui/icons/PlayArrowOutlined';
 
 const useStyles = makeStyles(() => ({
     card: {
@@ -33,20 +27,15 @@ const useStyles = makeStyles(() => ({
         backgroundColor: red[500],
     },
     buttons: {
-        color: '#6200EE'
+        containedPrimary: '#6200EE'
+    },
+    cardActions: {
+        justifyContent: "center"
     }
 }));
 
 export default function NextTournamentCard(props) {
     const classes = useStyles();
-    const [expanded, setExpanded] = React.useState(false);
-
-    const handleExpandClick = () => {
-        if(!expanded){
-            props.fetchAttendees(props.id);
-        }
-        setExpanded(!expanded);
-    };
 
     return (
         <Card className={classes.card}>
@@ -71,40 +60,24 @@ export default function NextTournamentCard(props) {
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    Capacité : {props.maximumAttendeeCapacity}
+                    Participants : {props.attendees.length}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    Places restantes : {props.maximumAttendeeCapacity - props.attendees.length}
+                    Commencé depuis :
                 </Typography>
             </CardContent>
-            <CardActions disableSpacing>
+            <CardActions disableSpacing classes={{root: classes.cardActions}}>
                 <Button
-                    aria-label={"subscribe"}
+                    variant="contained"
+                    color="primary"
+                    aria-label={"See scores"}
                     className={classes.buttons}
-                    startIcon={props.isSubscribedToTournament ? <DeleteIcon /> : <AddIcon />}
-                    onClick={
-                        props.isSubscribedToTournament ?
-                            () => props.unsubscribeUserToTournament(props.id)
-                            : () => props.subscribeUserToTournament(props.id)
-                        }
+                    startIcon={<PlayIcon />}
+                    //onClick={}
                 >
-                    { props.isSubscribedToTournament ? "Se désinscrire" : "S'inscrire" }
-                </Button>
-                <Button
-                    aria-label="See more"
-                    className={classes.buttons}
-                    startIcon={<ErrorOutlineIcon />}
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
-                >
-                    Participants
+                    Direct
                 </Button>
             </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent>
-                    <ListOfAttendees attendees={props.attendeesNames} />
-                </CardContent>
-            </Collapse>
         </Card>
     );
 }
