@@ -9,6 +9,7 @@ import ProfilePage from "./components/pages/Profile";
 import TeamsPage from "./components/pages/Teams";
 import TournamentsPage from "./components/pages/Tournaments";
 import AdminPage from "./components/pages/Admin";
+import PrivacyPolicyPage from "./components/pages/PrivacyPolicyPage";
 
 import BottomNav from "./components/partials/BottomNav";
 
@@ -96,6 +97,9 @@ class App extends Component {
                             <PrivateAdminRoute path="/admin" isAuthenticated={this.state.isLoggedIn} isAdmin={isUserAdmin}>
                                 <AdminPage />
                             </PrivateAdminRoute>
+                            <Route path="/politique-de-confidentialite">
+                                <PrivacyPolicyPage />
+                            </Route>
                         </Switch>
                     </BrowserRouter>
                 </MuiPickersUtilsProvider>) :

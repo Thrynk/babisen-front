@@ -11,13 +11,12 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
 //import ShareIcon from '@material-ui/icons/Share';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 import Collapse from '@material-ui/core/Collapse';
 
 import ListOfAttendees from "./ListOfAttendees";
+import ButtonSoloSubscribe from "./ButtonSoloSubscribe";
 
 import defaultImage from "../../../logo.jpeg";
 
@@ -80,18 +79,19 @@ export default function NextTournamentCard(props) {
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
-                <Button
-                    aria-label={"subscribe"}
-                    className={classes.buttons}
-                    startIcon={props.isSubscribedToTournament ? <DeleteIcon /> : <AddIcon />}
-                    onClick={
-                        props.isSubscribedToTournament ?
-                            () => props.unsubscribeUserToTournament(props.id)
-                            : () => props.subscribeUserToTournament(props.id)
-                        }
-                >
-                    { props.isSubscribedToTournament ? "Se désinscrire" : "S'inscrire" }
-                </Button>
+                {
+                    props.isSolo ?
+                        <ButtonSoloSubscribe
+                            subscribeUserToTournament={props.subscribeUserToTournament}
+                            unsubscribeUserToTournament={props.unsubscribeUserToTournament}
+                            id={props.id}
+                            isSubscribedToTournament={props.isSubscribedToTournament}
+                            classes={classes.buttons}
+                        />
+                        :
+                        <div>Duo</div>
+                }
+
                 <Button
                     aria-label="See more"
                     className={classes.buttons}
