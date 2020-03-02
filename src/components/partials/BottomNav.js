@@ -40,7 +40,7 @@ export default function BottomNav(){
     const [value, setValue] = React.useState(0);
     const location = useLocation();
 
-    const isAdminPage = location.pathname === "/admin";
+    const isAdminPage = location.pathname === "/admin" || location.pathname === "/notifications";
 
     return(
         !isAdminPage ? (
