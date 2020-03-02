@@ -5,15 +5,14 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
+//import Avatar from '@material-ui/core/Avatar';
+//import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
-import ShareIcon from '@material-ui/icons/Share';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+//import ShareIcon from '@material-ui/icons/Share';
+import ResultIcon from '@material-ui/icons/AssignmentOutlined';
+import defaultImage from "../../../logo.jpeg";
 
 const useStyles = makeStyles(() => ({
     card: {
@@ -29,61 +28,52 @@ const useStyles = makeStyles(() => ({
         backgroundColor: red[500],
     },
     buttons: {
-        color: '#6200EE'
+        containedPrimary: '#6200EE'
+    },
+    cardActions: {
+        justifyContent: "center"
     }
 }));
 
-export default function TournamentCard(props) {
+export default function NextTournamentCard(props) {
     const classes = useStyles();
 
     return (
         <Card className={classes.card}>
             <CardHeader
-                avatar={
+                /*avatar={
                     <Avatar aria-label="recipe" className={classes.avatar}>
                         R
                     </Avatar>
-                }
-                action={
+                }*/
+                /*action={
                     <IconButton aria-label="share">
                         <ShareIcon />
                     </IconButton>
-                }
+                }*/
                 title={props.name}
                 subheader={props.date}
             />
             <CardMedia
                 className={classes.media}
-                image={props.imgUrl}
+                image={props.imgUrl ? props.imgUrl : defaultImage}
                 title="Image tournoi"
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    Capacité : {props.maximumAttendeeCapacity}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                    Places restantes : {props.remainingAttendeeCapacity}
+                    Participants : {props.attendees.length}
                 </Typography>
             </CardContent>
-            <CardActions disableSpacing>
+            <CardActions disableSpacing classes={{root: classes.cardActions}}>
                 <Button
-                    aria-label={"subscribe"}
+                    variant="outlined"
+                    color="primary"
+                    aria-label={"See results"}
                     className={classes.buttons}
-                    startIcon={props.isSubscribedToTournament ? <DeleteIcon /> : <AddIcon />}
-                    onClick={
-                        props.isSubscribedToTournament ?
-                            () => props.unsubscribeUserToTournament(props.id)
-                            : () => props.subscribeUserToTournament(props.id)
-                        }
+                    startIcon={<ResultIcon />}
+                    //onClick={}
                 >
-                    { props.isSubscribedToTournament ? "Se désinscrire" : "S'inscrire" }
-                </Button>
-                <Button
-                    aria-label="See more"
-                    className={classes.buttons}
-                    startIcon={<ErrorOutlineIcon />}
-                >
-                    Voir plus
+                    Résultats
                 </Button>
             </CardActions>
         </Card>
