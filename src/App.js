@@ -10,6 +10,7 @@ import TeamsPage from "./components/pages/Teams";
 import TournamentsPage from "./components/pages/Tournaments";
 import AdminPage from "./components/pages/Admin";
 import AdminNotification from "./components/pages/AdminNotification";
+import DirectNotifications from "./components/pages/DirectNotifications";
 
 import BottomNav from "./components/partials/BottomNav";
 
@@ -93,6 +94,9 @@ class App extends Component {
                             </PrivateRoute>
                             <PrivateRoute path="/teams" isAuthenticated={this.state.isLoggedIn}>
                                 <TeamsPage/>
+                            </PrivateRoute>
+                            <PrivateRoute path="/directnotifications" isAuthenticated={this.state.isLoggedIn}>
+                                <DirectNotifications />
                             </PrivateRoute>
                             <PrivateAdminRoute path="/admin" isAuthenticated={this.state.isLoggedIn} isAdmin={isUserAdmin}>
                                 <AdminPage />
