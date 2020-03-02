@@ -9,6 +9,7 @@ import ProfilePage from "./components/pages/Profile";
 import TeamsPage from "./components/pages/Teams";
 import TournamentsPage from "./components/pages/Tournaments";
 import AdminPage from "./components/pages/Admin";
+import PrivacyPolicyPage from "./components/pages/PrivacyPolicyPage";
 
 import BottomNav from "./components/partials/BottomNav";
 
@@ -34,7 +35,7 @@ class App extends Component {
         fetch(process.env.REACT_APP_API_URL + '/api/users/me', {method: 'GET', credentials: "include"}).then(r => {
             if(r.status === 200){
                 r.json().then((function(user){
-                   console.log(user);
+                    //console.log(user);
                     this.setState({isLoggedIn: true, isLoaded: true, user});
                 }).bind(this)).catch(function(e){
                     console.log(e);
@@ -52,7 +53,7 @@ class App extends Component {
 
     facebookResponse(response){
         this.setState({isLoaded: false});
-        console.log(response);
+        //console.log(response);
         const tokenBlob = new Blob([JSON.stringify({access_token: response.accessToken}, null, 2)], {type : 'application/json'});
         const options = {
             method: 'POST',
@@ -60,9 +61,8 @@ class App extends Component {
             credentials: "include"
         };
         fetch(process.env.REACT_APP_API_URL + '/api/auth/facebook', options).then(r => {
-            console.log(r.headers);
             r.json().then(user => {
-                console.log(user);
+                //console.log(user);
                 this.setState({isLoggedIn: true, user, isLoaded: true});
             });
         })
@@ -71,6 +71,8 @@ class App extends Component {
     render(){
 
         const isUserAdmin = this.state.user ? this.state.user.role === "admin" : false;
+
+        const userId = this.state.user ? this.state.user._id : null;
 
         return (
             this.state.isLoaded ?
@@ -87,7 +89,7 @@ class App extends Component {
                                 <ProfilePage user={this.state.user}/>
                             </PrivateRoute>
                             <PrivateRoute path="/tournaments" isAuthenticated={this.state.isLoggedIn}>
-                                <TournamentsPage/>
+                                <TournamentsPage userId={userId} />
                             </PrivateRoute>
                             <PrivateRoute path="/teams" isAuthenticated={this.state.isLoggedIn}>
                                 <TeamsPage/>
@@ -95,6 +97,9 @@ class App extends Component {
                             <PrivateAdminRoute path="/admin" isAuthenticated={this.state.isLoggedIn} isAdmin={isUserAdmin}>
                                 <AdminPage />
                             </PrivateAdminRoute>
+                            <Route path="/politique-de-confidentialite">
+                                <PrivacyPolicyPage />
+                            </Route>
                         </Switch>
                     </BrowserRouter>
                 </MuiPickersUtilsProvider>) :
