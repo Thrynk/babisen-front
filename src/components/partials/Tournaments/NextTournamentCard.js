@@ -17,6 +17,7 @@ import Collapse from '@material-ui/core/Collapse';
 
 import ListOfAttendees from "./ListOfAttendees";
 import ButtonSoloSubscribe from "./ButtonSoloSubscribe";
+import ButtonDuoSubscribe from "./ButtonDuoSubscribe";
 
 import defaultImage from "../../../logo.jpeg";
 
@@ -89,7 +90,10 @@ export default function NextTournamentCard(props) {
                             classes={classes.buttons}
                         />
                         :
-                        <div>Duo</div>
+                        <ButtonDuoSubscribe
+                            isSubscribeToTournament={true}
+                            classes={classes.buttons}
+                        />
                 }
 
                 <Button
