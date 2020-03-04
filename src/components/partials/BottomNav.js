@@ -9,7 +9,6 @@ import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined'
 import AccountTreeOutlinedIcon from '@material-ui/icons/AccountTreeOutlined';
 import PeopleOutlineOutlinedIcon from '@material-ui/icons/PeopleOutlineOutlined';
 
-
 const actionNavStyles= makeStyles({
     root : {
         color: 'rgba(255, 255, 255, 0.74) !important'
@@ -59,6 +58,30 @@ export default function BottomNav(){
                 <BottomNavigationAction label="Equipes" icon={<PeopleOutlineOutlinedIcon/>} component={Link} to="/teams"
                                         classes={{root: classesActionNav.root, selected: classesActionNav.selected}}/>
             </BottomNavigation>
-        ) : null
+        ) : 
+        (   <BottomNavigation
+                value={value}
+                onChange={(event, newValue) => {
+                    setValue(newValue);
+                }}
+                showLabels
+                classes={{root: classesNav.root}}
+            >
+                    <BottomNavigationAction
+                        label="New Tounament"
+                        icon={<AccountTreeOutlinedIcon/>}
+                        component={Link} to="/admin" 
+                        classes={{root: classesActionNav.root, selected: classesActionNav.selected}}
+                    />
+
+                    <BottomNavigationAction
+                            label="Add Notifications"
+                            icon={<AccountCircleOutlinedIcon/>}
+                            component={Link} 
+                            to="/notifications"
+                            classes={{root: classesActionNav.root, selected: classesActionNav.selected}}
+                    />
+            </BottomNavigation>
+        )
     );
 }

@@ -24,14 +24,16 @@ export default class AdminNotification extends React.Component {
         let listNotifications = Array.from(this.state.listNotifications);
         listNotifications.push(this.state.notif);
         this.setState({ listNotifications: listNotifications });
+
+
     }
 
     render(){
         return (
-            <div>
+            <div align="center">
             <form onSubmit={this.handleSubmit}>
                 <FormControl>
-                    <Input name="notif" value={this.state.value} onChange={this.handleChange} inputRef={this.textInput}></Input>
+                    <Input name="notif" value={this.state.value} onChange={this.handleChange} inputRef={this.textInput} color='Secondary'></Input>
                     <Button variant="contained" 
                             color="primary"
                             type="submit" 
@@ -56,20 +58,3 @@ export default class AdminNotification extends React.Component {
         );
     }
 }
-
-/*class CustomInput extends Input {
-    constructor(props){
-        super(props);
-    }
-
-    render(){
-        return(
-            <Input
-                name={this.props.name}
-                value={this.props.value} 
-                onChange={this.props.onChange}
-                inputRef={this.props.inputRef}
-            ></Input>
-        );
-    }
-}*/

@@ -13,7 +13,7 @@ import { red } from '@material-ui/core/colors';
 //import ShareIcon from '@material-ui/icons/Share';
 import PlayIcon from '@material-ui/icons/PlayArrowOutlined';
 import defaultImage from "../../../logo.jpeg";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
     card: {
