@@ -91,8 +91,12 @@ export default function NextTournamentCard(props) {
                         />
                         :
                         <ButtonDuoSubscribe
-                            isSubscribeToTournament={true}
+                            isSubscribedToTournament={props.isSubscribedToTournament}
                             classes={classes.buttons}
+                            id={props.id}
+
+                            subscribeTeamToTournament={props.subscribeTeamToTournament}
+                            unsubscribeTeamToTournament={props.unsubscribeTeamToTournament}
                         />
                 }
 
@@ -108,7 +112,7 @@ export default function NextTournamentCard(props) {
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
-                    <ListOfAttendees attendees={props.attendeesNames} />
+                    <ListOfAttendees attendees={props.attendeesNames} isSolo={props.isSolo} />
                 </CardContent>
             </Collapse>
         </Card>

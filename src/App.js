@@ -74,6 +74,8 @@ class App extends Component {
 
         const userId = this.state.user ? this.state.user._id : null;
 
+        const userTeams = this.state.user ? this.state.user.affiliationTeams : null;
+
         return (
             this.state.isLoaded ?
                 (<MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -89,7 +91,7 @@ class App extends Component {
                                 <ProfilePage user={this.state.user}/>
                             </PrivateRoute>
                             <PrivateRoute path="/tournaments" isAuthenticated={this.state.isLoggedIn}>
-                                <TournamentsPage userId={userId} />
+                                <TournamentsPage userId={userId} userTeams={userTeams} />
                             </PrivateRoute>
                             <PrivateRoute path="/teams" isAuthenticated={this.state.isLoggedIn}>
                                 <TeamsPage/>

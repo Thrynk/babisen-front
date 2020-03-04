@@ -22,14 +22,18 @@ export default function ListOfAttendees(props){
 
     const classes = useStyles();
 
-    console.log(props.attendees);
-
     return (
       <Fragment>
           <List className={classes.root}>
               { props.attendees !== undefined ? (
                     props.attendees.length !== 0 ? (
                         props.attendees.map(attendee => {
+
+                            let name = props.isSolo ?
+                                attendee.first_name + ' ' + attendee.last_name
+                                :
+                                attendee.name;
+
                             return (
                               <ListItem>
                                   <ListItemAvatar>
@@ -37,7 +41,7 @@ export default function ListOfAttendees(props){
                                           <ImageIcon />
                                       </Avatar>
                                   </ListItemAvatar>
-                                  <ListItemText primary={attendee.first_name + ' ' + attendee.last_name} />
+                                  <ListItemText primary={name} />
                               </ListItem>
                             );
                         })

@@ -102,9 +102,26 @@ function Tournaments(props){
                 {
                     props.nextTournaments.map(function(tournament, index){
 
-                        let isSubscribedToTournament = tournament.attendees.find(attendee => {
-                            return attendee === props.userId;
-                        });
+                        let isSubscribedToTournament = false;
+
+                        if(tournament.isSolo){
+                            isSubscribedToTournament = tournament.attendees.find(attendee => {
+                                return attendee === props.userId;
+                            });
+                        }
+                        else{
+                            props.userTeams.map(userTeam => {
+                                isSubscribedToTournament = tournament.attendees.find(attendee => {
+                                    return attendee === userTeam;
+                                });
+                                return null;
+                            });
+
+                        }
+
+                        isSubscribedToTournament = isSubscribedToTournament !== undefined;
+                        //console.log(isSubscribedToTournament);
+
 
                         /*console.log(isSubscribedToTournament);
                         console.log(isSubscribedToTournament !== undefined);*/
@@ -119,11 +136,16 @@ function Tournaments(props){
                                 id={tournament._id}
                                 attendees={tournament.attendees}
                                 attendeesNames={props.nextTournamentAttendees[tournament._id]}
+                                isSolo={tournament.isSolo}
 
-                                isSubscribedToTournament={isSubscribedToTournament !== undefined}
+                                isSubscribedToTournament={isSubscribedToTournament}
 
                                 subscribeUserToTournament={props.subscribeUserToTournament}
                                 unsubscribeUserToTournament={props.unsubscribeUserToTournament}
+
+                                subscribeTeamToTournament={props.subscribeTeamToTournament}
+                                unsubscribeTeamToTournament={props.unsubscribeTeamToTournament}
+
                                 fetchAttendees={props.fetchAttendees}
                             />
                         );
@@ -197,6 +219,8 @@ export default class TournamentsPage extends Component {
         this.subscribeUserToTournament = this.subscribeUserToTournament.bind(this);
         this.unsubscribeUserToTournament = this.unsubscribeUserToTournament.bind(this);
         this.fetchAttendeesOfTournament = this.fetchAttendeesOfTournament.bind(this);
+        this.subscribeTeamToTournament = this.subscribeTeamToTournament.bind(this);
+        this.unsubscribeTeamToTournament = this.unsubscribeTeamToTournament.bind(this);
     }
 
     componentDidMount() {
@@ -308,7 +332,7 @@ export default class TournamentsPage extends Component {
     }
 
     subscribeUserToTournament(tournamentId){
-        console.log("suscribe : ", this.props.userId, " to ", tournamentId);
+        console.log("suscribe user : ", this.props.userId, " to ", tournamentId);
         fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendee/add/' + tournamentId,
             {
                     method:'PUT',
@@ -328,7 +352,7 @@ export default class TournamentsPage extends Component {
     }
 
     unsubscribeUserToTournament(tournamentId){
-        console.log("unsuscribe : ", this.props.userId, " to ", tournamentId);
+        console.log("unsuscribe user : ", this.props.userId, " to ", tournamentId);
         fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendee/remove/' + tournamentId,
         {
                 method:'PUT',
@@ -337,6 +361,46 @@ export default class TournamentsPage extends Component {
                     'Content-type': 'application/json'
                 },
                 body: JSON.stringify({ attendee: this.props.userId })
+            }
+        )
+            .then(response => {
+                if(response.status === 200){
+                    this.forceUpdate();
+                }
+            })
+            .catch(error => console.log(error));
+    }
+
+    subscribeTeamToTournament(tournamentId, teamId){
+        console.log("suscribe team : ", teamId, " to ", tournamentId);
+        fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendee/add/' + tournamentId,
+            {
+                method:'PUT',
+                credentials: "include",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({ attendee: teamId })
+            }
+        )
+            .then(response => {
+                if(response.status === 200){
+                    this.forceUpdate();
+                }
+            })
+            .catch(error => console.log(error));
+    }
+
+    unsubscribeTeamToTournament(tournamentId, teamId){
+        console.log("unsuscribe team : ", teamId, " to ", tournamentId);
+        fetch(process.env.REACT_APP_API_URL + '/api/tournaments/attendee/remove/' + tournamentId,
+            {
+                method:'PUT',
+                credentials: "include",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({ attendee: teamId })
             }
         )
             .then(response => {
@@ -372,10 +436,15 @@ export default class TournamentsPage extends Component {
                 currentTournaments={this.state.currentTournaments}
                 finishedTournaments={this.state.finishedTournaments}
                 userId={this.props.userId}
+                userTeams={this.props.userTeams}
                 nextTournamentAttendees={this.state.nextTournamentAttendees}
 
                 subscribeUserToTournament={this.subscribeUserToTournament}
                 unsubscribeUserToTournament={this.unsubscribeUserToTournament}
+
+                subscribeTeamToTournament={this.subscribeTeamToTournament}
+                unsubscribeTeamToTournament={this.unsubscribeTeamToTournament}
+
                 fetchAttendees={this.fetchAttendeesOfTournament}
             />
           </Fragment>
