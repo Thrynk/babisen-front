@@ -36,11 +36,6 @@ export default function ListOfAttendees(props){
 
                             return (
                               <ListItem>
-                                  <ListItemAvatar>
-                                      <Avatar>
-                                          <ImageIcon />
-                                      </Avatar>
-                                  </ListItemAvatar>
                                   <ListItemText primary={name} />
                               </ListItem>
                             );

@@ -67,6 +67,7 @@ export default function NewTournamentForm(props){
     const classes = useStyles();
 
     return (
+        <div>
         <Paper className={classes.root}>
             <form onSubmit={props.handleSubmit} className={classes.form}>
                 <Typography variant="h1" className={classes.title}>Création de tournoi</Typography>
@@ -210,6 +211,7 @@ export default function NewTournamentForm(props){
                 }
             </form>
         </Paper>
+        </div>
     );
 }
 
