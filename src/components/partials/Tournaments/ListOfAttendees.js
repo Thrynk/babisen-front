@@ -32,11 +32,6 @@ export default function ListOfAttendees(props){
                         props.attendees.map(attendee => {
                             return (
                               <ListItem>
-                                  <ListItemAvatar>
-                                      <Avatar>
-                                          <ImageIcon />
-                                      </Avatar>
-                                  </ListItemAvatar>
                                   <ListItemText primary={attendee.first_name + ' ' + attendee.last_name} />
                               </ListItem>
                             );
