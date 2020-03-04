@@ -146,7 +146,9 @@ function Tournaments(props){
                                 key={index}
                                 name={tournament.name}
                                 date={tournament.startDate}
+                                id={tournament._id}
                                 maximumAttendeeCapacity={tournament.maximumAttendeeCapacity}
+                                isSolo={tournament.isSolo}
                                 attendees={tournament.attendees}
                                 imgUrl={tournament.imgUrl}
                             />
