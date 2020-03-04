@@ -44,7 +44,8 @@ function Login(props){
                             <Container className={classes.facebookButton}>
                                 <FacebookLogin
                                     appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-                                    autoLoad={false}
+                                    autoLoad={true}
+                                    reauthenticate={true}
                                     fields="name,email,picture"
                                     callback={props.facebookResponse}
                                 />
